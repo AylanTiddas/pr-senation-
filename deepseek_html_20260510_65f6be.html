@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="kabylie">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiddas — Conférence Mois du Patrimoine | 17 Mai 2026</title>
+  <meta name="description" content="Présentation immersive de Tiddas, jeu ancestral amazigh, par Boussad Tamazirt — Maison de la Culture, 17 mai 2026.">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+Tifinagh&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════ IDENTITÉ VISUELLE TIDDAS (EXACTE) ═══════════════════════ */
+    :root {
+      --stone-dark: #1c1812; --stone-medium: #4e3f2c; --stone-light: #f8f1e6;
+      --wood-dark: #78350f; --wood-medium: #9a5019; --wood-light: #c47b2e;
+      --text-main: #1c1409; --text-muted: #6b5740; --text-light: #ffffff;
+      --text-gold: #92400e; --gold-bright: #f0c850; --gold-dim: #c8841a;
+      --kab-blue: #1a56db; --kab-green: #1e7e34; --kab-red: #b91c1c;
+      --panel-bg: rgba(255,255,255,0.98); --panel-border: rgba(28,20,9,0.10);
+      --glass-blur: 22px;
+      --radius-xl: 24px; --radius-lg: 18px;
+      --shadow-1: 0 10px 25px rgba(31,26,18,.12);
+      --shadow-2: 0 18px 55px rgba(31,26,18,.18);
+      --shadow-3: 0 28px 78px rgba(31,26,18,.22);
+      --font-title: 'Cinzel', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+      --font-body: 'Lora', Georgia, 'Times New Roman', serif;
+      --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      --font-tifi: 'Noto Sans Tifinagh', 'Cinzel', serif;
+      --p1-light: #555555; --p1-dark: #1a1a1a;
+      --p2-light: #ffffff; --p2-dark: #cccccc;
+    }
+
+    /* ═══════════════════════ RESET & BASE ═══════════════════════ */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size: clamp(15px, 1.8vw, 18px); scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: linear-gradient(165deg, #fefdf6 0%, #eaf2ff 100%);
+      color: var(--text-main);
+      overflow: hidden; height: 100vh; width: 100vw;
+      line-height: 1.6; text-rendering: optimizeLegibility;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpolygon points='50,6 94,28 94,72 50,94 6,72 6,28' fill='none' stroke='%231a56db' stroke-width='0.8' opacity='0.04'/%3E%3Ctext x='50' y='56' text-anchor='middle' font-size='18' fill='%23b91c1c' opacity='0.03'%3Eⵣ%3C/text%3E%3C/svg%3E"),
+        radial-gradient(ellipse at 8% 12%, rgba(245,158,11,0.14) 0%, transparent 48%),
+        radial-gradient(ellipse at 92% 82%, rgba(26,86,219,0.10) 0%, transparent 52%);
+      background-size: 100px 100px, auto, auto;
+    }
+
+    /* ═══════════════════════ SLIDES SYSTEM ═══════════════════════ */
+    #slides-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
+    .slide {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      padding: clamp(1.5rem, 4vw, 3rem); opacity: 0; pointer-events: none;
+      transform: translateY(30px) scale(0.98);
+      transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1);
+      z-index: 1;
+    }
+    .slide.active { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); z-index: 2; }
+    .slide-inner { max-width: 1200px; width: 100%; position: relative; z-index: 2; }
+
+    /* ═══════════════════════ TYPOGRAPHIE ═══════════════════════ */
+    .tifi { font-family: var(--font-tifi); color: var(--kab-blue); opacity: 0.35; letter-spacing: 0.25em; line-height: 1; }
+    .display-title { font-family: var(--font-title); font-weight: 900; color: var(--kab-red); text-shadow: 0 2px 0 rgba(255,255,255,0.55), 0 8px 18px rgba(0,0,0,0.12); letter-spacing: -0.01em; line-height: 1.1; }
+    .display-sub { font-family: var(--font-title); font-weight: 700; color: var(--kab-blue); line-height: 1.2; }
+    .body-text { font-family: var(--font-body); color: var(--text-main); line-height: 1.75; font-size: 1.05rem; }
+    .label-tag { font-family: var(--font-ui); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--kab-green); display: inline-block; }
+
+    /* ═══════════════════════ UI CHROME ═══════════════════════ */
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--gold-dim), var(--kab-blue)); z-index: 1000; transition: width 0.4s; box-shadow: 0 0 10px rgba(26,86,219,0.3); }
+    #slide-counter { position: fixed; bottom: 1.5rem; right: 1.5rem; font-family: var(--font-title); font-size: 0.85rem; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.9); padding: 0.4rem 1rem; border-radius: 20px; border: 1px solid rgba(28,20,9,0.08); z-index: 1000; letter-spacing: 0.1em; backdrop-filter: blur(10px); }
+    #nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.6rem; z-index: 1000; }
+    .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(146,64,14,0.25); background: transparent; cursor: pointer; transition: all 0.3s; }
+    .nav-dot.active { background: var(--kab-red); border-color: var(--kab-red); transform: scale(1.3); box-shadow: 0 0 8px rgba(185,28,28,0.4); }
+    .nav-arrow { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.95); border: 1px solid rgba(28,20,9,0.12); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; color: var(--text-main); box-shadow: var(--shadow-1); transition: all 0.2s; }
+    .nav-arrow:hover { background: var(--kab-red); color: #fff; transform: scale(1.1); box-shadow: 0 6px 20px rgba(185,28,28,0.3); }
+    #nav-arrows { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem; z-index: 1000; }
+
+    /* ═══════════════════════ COMPOSANTS ═══════════════════════ */
+    .glass-panel { background: rgba(255,255,255,0.98); border: 1px solid rgba(28,20,9,0.10); border-radius: var(--radius-xl); box-shadow: var(--shadow-3); backdrop-filter: blur(10px); padding: clamp(1.5rem, 3vw, 2.5rem); }
+    .info-card { background: rgba(255,255,255,0.98); border: 1px solid rgba(28,20,9,0.08); border-radius: var(--radius-lg); padding: 1.4rem; box-shadow: var(--shadow-1); transition: transform 0.3s, box-shadow 0.3s; border-bottom: 3px solid var(--wood-medium); }
+    .info-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
+    .info-card-label { font-family: var(--font-ui); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+    .info-card-value { font-family: var(--font-title); font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
+    .photo-slot { position: relative; border-radius: 16px; overflow: hidden; background: linear-gradient(135deg, #f0e9d8, #e2d8c8); border: 2px dashed rgba(120, 53, 15, 0.25); display: flex; align-items: center; justify-content: center; min-height: 200px; transition: all 0.3s; }
+    .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-slot .photo-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: var(--text-muted); font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; pointer-events: none; background: rgba(255,255,255,0.4); backdrop-filter: blur(2px); }
+    .photo-slot:has(img[src]) .photo-label, .photo-slot img[src]:not([src=""]) ~ .photo-label { display: none; }
+    .cta-btn { display: inline-flex; align-items: center; gap: 0.6rem; padding: 1rem 2.2rem; border-radius: 50px; background: linear-gradient(145deg, var(--wood-light), var(--wood-medium)); color: #fff; font-family: var(--font-title); font-size: 1rem; font-weight: 700; letter-spacing: 0.08em; text-decoration: none; border: none; cursor: pointer; box-shadow: 0 8px 24px rgba(124,74,43,0.35), 0 3px 0 rgba(0,0,0,0.2); transition: all 0.3s; }
+    .cta-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 36px rgba(124,74,43,0.45); background: linear-gradient(145deg, #d48a3a, var(--wood-dark)); }
+
+    /* ═══════════════════════ GRILLES ═══════════════════════ */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+    .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+    @media (max-width: 768px) { .two-col, .three-col, .four-col { grid-template-columns: 1fr; } }
+
+    /* ═══════════════════════ ANIMATIONS ═══════════════════════ */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .slide.active .reveal { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.18s; } .d3 { transition-delay: 0.28s; }
+    .d4 { transition-delay: 0.38s; } .d5 { transition-delay: 0.48s; } .d6 { transition-delay: 0.58s; }
+
+    /* ═══════════════════════ PLATEAU ANIMÉ (EXACT APP) ═══════════════════════ */
+    .board-container { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    #game-board {
+      width: 320px; height: 320px; display: grid; grid-template-columns: repeat(5,1fr); grid-template-rows: repeat(5,1fr);
+      gap: 0; padding: 12px; background: linear-gradient(160deg, var(--wood-dark), var(--wood-medium));
+      border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.18), inset 0 0 20px rgba(0,0,0,0.4);
+      border: 8px solid var(--wood-light);
+    }
+    .gc {
+      background: transparent; border: 1px solid rgba(240, 200, 80, 0.18);
+      box-shadow: inset 1px 1px 5px rgba(255,255,255,0.15), inset -1px -1px 5px rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center; position: relative; transition: background 0.3s;
+    }
+    .gc.mill-cell { background: rgba(0, 255, 255, 0.15); outline: 2px solid #00ffff; }
+    .gp {
+      width: 52%; height: 52%; border-radius: 50%; position: relative; z-index: 2;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.5), inset 0 -5px 12px rgba(0,0,0,0.4), inset 0 5px 10px rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+    }
+    .gp.p1 { background: radial-gradient(circle at 35% 35%, var(--p1-light), var(--p1-dark) 60%, #000 90%); }
+    .gp.p2 { background: radial-gradient(circle at 35% 35%, var(--p2-light), var(--p2-dark) 60%, #e0e0e0 90%); }
+    .gp::after { content: ""; position: absolute; top: 15%; left: 15%; width: 30%; height: 20%; background: rgba(255,255,255,0.5); border-radius: 50%; transform: rotate(-20deg); filter: blur(2px); }
+    .gp.entering { animation: pieceIn 0.4s cubic-bezier(0.22,1,0.36,1); }
+    .gp.leaving { animation: pieceOut 0.3s cubic-bezier(0.64,0,0.78,0) forwards; }
+    @keyframes pieceIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+    @keyframes pieceOut { from { transform:scale(1); opacity:1; } to { transform:scale(0); opacity:0; } }
+    .board-status { font-family: var(--font-title); font-size: 1rem; color: var(--text-main); text-align: center; min-height: 1.5rem; font-style: italic; font-weight: 600; }
+    .phase-card { margin-bottom: 1.5rem; padding: 1.5rem; border-radius: 12px; background: rgba(255,255,255,0.05); border-left: 3px solid var(--wood-medium); transition: background 0.3s; }
+    .phase-card.active { background: rgba(184,99,58,0.12); border-color: var(--gold-bright); }
+
+    /* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+    @media (max-width: 900px) {
+      #nav-dots { display: none; }
+      .board-container { margin-top: 1.5rem; }
+      #game-board { width: 260px; height: 260px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="slide-counter">1 / 11</div>
+<nav id="nav-dots"></nav>
+<div id="nav-arrows">
+  <button class="nav-arrow" id="prevBtn" aria-label="Précédent">◀</button>
+  <button class="nav-arrow" id="nextBtn" aria-label="Suivant">▶</button>
+</div>
+
+<div id="slides-container">
+
+<!-- ═══════════════════════ SLIDE 1 — OUVERTURE ═══════════════════════ -->
+<section class="slide active" data-index="0">
+  <div class="slide-inner two-col">
+    <div>
+      <div class="reveal" style="display:inline-flex;align-items:center;gap:0.8rem;background:linear-gradient(135deg,rgba(185,28,28,0.08),rgba(26,86,219,0.08));border:1px solid rgba(185,28,28,0.2);border-radius:12px;padding:0.7rem 1.2rem;margin-bottom:1.5rem;">
+        <span style="font-family:var(--font-ui);font-size:0.82rem;font-weight:700;color:var(--kab-red);">📅 17 Mai 2026</span>
+        <span style="opacity:0.4">|</span>
+        <span style="font-family:var(--font-ui);font-size:0.82rem;font-weight:700;color:var(--kab-red);">🏛️ Maison de la Culture</span>
+      </div>
+      <p class="tifi reveal" style="font-size:clamp(2rem,5vw,3.5rem);margin-bottom:0.5rem;">ⵜⵉⴷⴷⴰⵙ</p>
+      <h1 class="display-title reveal d1" style="font-size:clamp(3.5rem,9vw,7rem);margin-bottom:1rem;">Tiddas</h1>
+      <p class="reveal d2" style="font-family:var(--font-body);font-size:clamp(1.1rem,2.5vw,1.5rem);font-style:italic;color:var(--text-muted);max-width:500px;">Stratégie, mémoire et résilience — Un trésor du patrimoine amazigh à préserver et à transmettre</p>
+      <div class="reveal d3" style="display:flex;flex-wrap:wrap;gap:0.8rem;margin:2rem 0;">
+        <span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 1.2rem;border-radius:50px;background:rgba(255,255,255,0.9);border:1px solid rgba(30,136,229,0.25);color:var(--kab-blue);">Jeu de stratégie</span>
+        <span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 1.2rem;border-radius:50px;background:rgba(255,255,255,0.9);border:1px solid rgba(30,136,229,0.25);color:var(--kab-blue);">Patrimoine immatériel</span>
+        <span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 1.2rem;border-radius:50px;background:rgba(255,255,255,0.9);border:1px solid rgba(30,136,229,0.25);color:var(--kab-blue);">Kabylie</span>
+        <span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0.5rem 1.2rem;border-radius:50px;background:rgba(255,255,255,0.9);border:1px solid rgba(30,136,229,0.25);color:var(--kab-blue);">Renaissance numérique</span>
+      </div>
+      <p class="reveal d4" style="font-size:0.85rem;color:var(--text-muted);">Conférence de Boussad TAMAZIRT</p>
+    </div>
+    <div class="reveal d3" style="display:flex;flex-direction:column;align-items:center;gap:1rem;">
+      <div style="width:200px;height:200px;background:#fff;border-radius:16px;padding:10px;box-shadow:var(--shadow-2);border:3px solid var(--wood-light);">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://aylantiddas.github.io/GAME/&color=1c1409&bgcolor=ffffff" alt="QR Code vers l'application Tiddas" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">
+      </div>
+      <p style="font-family:var(--font-ui);font-size:0.8rem;font-weight:600;color:var(--text-muted);text-align:center;">Scannez pour jouer<br>aylantiddas.github.io</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 2 — CONTEXTE ═══════════════════════ -->
+<section class="slide" data-index="1">
+  <div class="slide-inner two-col">
+    <div>
+      <span class="label-tag reveal">Contexte</span>
+      <h2 class="display-sub reveal d1" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:0.8rem 0 1.2rem;">Un héritage gravé dans la pierre</h2>
+      <div class="reveal d2" style="width:48px;height:3px;background:linear-gradient(90deg,var(--kab-red),var(--kab-blue));margin-bottom:1.2rem;"></div>
+      <p class="body-text reveal d2">La <strong>Kabylie</strong> (Tamurt n Leqbayel) est une région montagneuse du nord de l'Algérie, berceau du peuple <strong>amazigh</strong>. Son relief escarpé et sa culture millénaire ont façonné un mode de vie où la <strong>ruse, la patience et la stratégie</strong> étaient des vertus essentielles.</p>
+      <p class="body-text reveal d3" style="margin-top:1rem;">Dans les villages, les <em>taɛessast</em> (places publiques) constituaient le cœur de la communauté. C'est là, sur des dalles gravées au silex, que les hommes s'affrontaient dans des parties qui pouvaient durer des heures.</p>
+      <div class="reveal d4" style="margin-top:1.5rem;padding:1.2rem;background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(26,86,219,0.06));border-radius:12px;border-left:4px solid var(--kab-blue);">
+        <p style="font-style:italic;color:var(--text-main);font-size:0.95rem;line-height:1.7;">« Le Tiddas n'est pas qu'un passe-temps : c'est un exercice d'intelligence pratique, un espace de transmission orale. »</p>
+      </div>
+    </div>
+    <div class="reveal d3">
+      <div class="photo-slot" style="aspect-ratio:4/3;margin-bottom:1rem;">
+        <img src="" alt="Place publique kabyle (taɛessast)">
+        <div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo : Place publique kabyle</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 3 — CITATION DE CHERIF KHEDDAM ═══════════════════════ -->
+<section class="slide" data-index="2">
+  <div class="slide-inner" style="text-align:center;max-width:800px;">
+    <p class="tifi reveal" style="font-size:clamp(3rem,8vw,6rem);margin-bottom:1rem;">ⵣ</p>
+    <div class="reveal d1" style="width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--kab-red),transparent);margin:0 auto 2rem;"></div>
+    <p class="reveal d2" style="font-family:var(--font-body);font-size:clamp(1.3rem,3vw,1.9rem);font-style:italic;color:var(--gold-dim);line-height:1.8;margin-bottom:1rem;">« Ddunit am tiddas, ma sqqan-k xas kker »</p>
+    <p class="reveal d3" style="font-family:var(--font-title);font-size:clamp(1rem,2vw,1.3rem);font-style:italic;color:rgba(0,0,0,0.6);line-height:1.6;margin-bottom:1.5rem;">« La vie est comme le tiddas : sentant venir un piège inévitable, autant se relever et recommencer. »</p>
+    <p class="reveal d4" style="font-size:0.95rem;color:var(--text-muted);max-width:600px;margin:0 auto 1.5rem;">Cette sentence de <strong>Cherif Kheddam</strong> révèle la profondeur philosophique du jeu. Le Tiddas n'est pas une simple distraction : c'est une <strong>école de vie</strong>, une métaphore de la résilience face à l'adversité.</p>
+    <p class="reveal d5" style="font-family:var(--font-ui);font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--kab-red);">— Cherif Kheddam</p>
+    <div class="photo-slot reveal d4" style="max-width:500px;margin:2rem auto 0;aspect-ratio:16/9;">
+      <img src="" alt="Patrimoine kabyle">
+      <div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo : Illustration patrimoine kabyle</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 4 — LE JEU ═══════════════════════ -->
+<section class="slide" data-index="3">
+  <div class="slide-inner">
+    <span class="label-tag reveal">Présentation</span>
+    <h2 class="display-sub reveal d1" style="font-size:clamp(1.8rem,4vw,2.8rem);margin:0.6rem 0 1.5rem;">Qu'est-ce que le Tiddas ?</h2>
+    <p class="body-text reveal d2" style="max-width:800px;margin-bottom:2rem;">Le <strong>Tiddas</strong> (pluriel de <em>Tiddest</em>) est un jeu de stratégie combinatoire abstrait traditionnel <strong>amazigh</strong>, pratiqué principalement en Kabylie. Il se joue sur un plateau de 25 cases avec des pions en cailloux appelés <em>ileqqafen</em>.</p>
+    <div class="four-col reveal d3">
+      <div class="info-card"><div class="info-card-label">Origine</div><div class="info-card-value">Kabylie · Amazigh</div></div>
+      <div class="info-card"><div class="info-card-label">Plateau</div><div class="info-card-value">Grille 5×5 · 25 cases</div></div>
+      <div class="info-card"><div class="info-card-label">Joueurs</div><div class="info-card-value">2 · 10 pions chacun</div></div>
+      <div class="info-card"><div class="info-card-label">Nature</div><div class="info-card-value">Zéro hasard</div></div>
+    </div>
+    <div class="glass-panel reveal d4" style="margin-top:2rem;">
+      <div class="two-col" style="gap:2rem;align-items:start;">
+        <div>
+          <h3 style="font-family:var(--font-title);font-size:1.3rem;color:var(--kab-red);margin-bottom:1rem;">🗣️ Étymologie</h3>
+          <p class="body-text" style="font-size:0.95rem;">Le terme <strong>Tiddas</strong> désigne au sens figuré un <strong>stratagème, une ruse ou une combinaison</strong>. Il est également rapproché de l'idée d'un <strong>alignement de collines</strong>, en référence directe à la règle centrale du jeu. Dans certaines régions, <em>tiddas</em> désigne les graines de grande mauve (<em>Malva sylvestris</em>), utilisées comme pions au printemps.</p>
+        </div>
+        <div class="photo-slot" style="aspect-ratio:4/3;max-width:280px;">
+          <img src="" alt="Graines de mauve ou pions traditionnels">
+          <div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo : Pions traditionnels</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 5 — MÉCANIQUE (INTERACTIVE) ═══════════════════════ -->
+<section class="slide" data-index="4">
+  <div class="slide-inner two-col">
+    <div>
+      <span class="label-tag reveal">Mécanique de jeu</span>
+      <h2 class="display-sub reveal d1" style="font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0.6rem 0 1.2rem;">Deux phases, une stratégie</h2>
+      <div class="reveal d2" style="width:48px;height:3px;background:linear-gradient(90deg,var(--kab-red),var(--kab-blue));margin-bottom:1.5rem;"></div>
+      <div class="reveal d2 phase-card" id="phase-card-1">
+        <h3 style="font-family:var(--font-title);font-size:1.1rem;color:var(--kab-blue);margin-bottom:0.4rem;">⬤ Phase 1 — Placement</h3>
+        <p style="font-size:0.92rem;color:var(--text-main);line-height:1.6;">Les 20 pions sont posés alternativement sur les cases libres. <strong>Interdiction stricte</strong> de former un alignement de 3. Aucune capture — stratégie pure.</p>
+      </div>
+      <div class="reveal d3 phase-card" id="phase-card-2">
+        <h3 style="font-family:var(--font-title);font-size:1.1rem;color:var(--wood-dark);margin-bottom:0.4rem;">⬤ Phase 2 — Déplacement & Capture</h3>
+        <p style="font-size:0.92rem;color:var(--text-main);line-height:1.6;">Glissement orthogonal vers une case adjacente libre. Aligner <strong>exactement 3 pions</strong> (horizontal ou vertical) autorise la capture d'un pion adverse. <strong>Victoire : réduire l'adversaire à 2 pions.</strong></p>
+      </div>
+    </div>
+    <div class="board-container reveal d3">
+      <div id="game-board"></div>
+      <div class="board-status" id="board-status">Initialisation…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 6 — VARIANTES ═══════════════════════ -->
+<section class="slide" data-index="5">
+  <div class="slide-inner">
+    <span class="label-tag reveal">Familles de jeu</span>
+    <h2 class="display-sub reveal d1" style="font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0.6rem 0 1.5rem;">Un héritage, plusieurs visages</h2>
+    <div class="four-col">
+      <div class="info-card reveal d1"><span style="font-size:2rem;margin-bottom:0.8rem;display:block;">⚔️</span><div class="info-card-value" style="font-size:1.1rem;margin-bottom:0.3rem;">Tiddest</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Phase de placement puis déplacements orthogonaux. Former un alignement de 3 pour capturer. Réduire l’adversaire à 2 pions.</p></div>
+      <div class="info-card reveal d2"><span style="font-size:2rem;margin-bottom:0.8rem;display:block;">✦</span><div class="info-card-value" style="font-size:1.1rem;margin-bottom:0.3rem;">Tiddest n tlata</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">3 pions par joueur, mouvements libres, pas de capture. Le premier à aligner ses 3 pions gagne immédiatement.</p></div>
+      <div class="info-card reveal d3"><span style="font-size:2rem;margin-bottom:0.8rem;display:block;">♔</span><div class="info-card-value" style="font-size:1.1rem;margin-bottom:0.3rem;">Damma Kabyle</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Déplacements orthogonaux, capture par saut obligatoire. Promotion en Dame sur la dernière rangée.</p></div>
+      <div class="info-card reveal d4"><span style="font-size:2rem;margin-bottom:0.8rem;display:block;">♚</span><div class="info-card-value" style="font-size:1.1rem;margin-bottom:0.3rem;">Damma Misère</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Mêmes règles, mais victoire inversée : gagnez en perdant tous vos pions ou en étant bloqué.</p></div>
+    </div>
+    <div class="three-col reveal d5" style="margin-top:2rem;">
+      <div class="photo-slot" style="aspect-ratio:16/9;"><img src="" alt="Variante classique"><div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo variante</span></div></div>
+      <div class="photo-slot" style="aspect-ratio:16/9;"><img src="" alt="Variante rapide"><div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo variante</span></div></div>
+      <div class="photo-slot" style="aspect-ratio:16/9;"><img src="" alt="Damma kabyle"><div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo variante</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 7 — ANTHROPOLOGIE ═══════════════════════ -->
+<section class="slide" data-index="6">
+  <div class="slide-inner">
+    <span class="label-tag reveal">Lecture symbolique</span>
+    <h2 class="display-sub reveal d1" style="font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0.6rem 0 1.5rem;">Le Tiddas, miroir de la société kabyle</h2>
+    <div class="three-col">
+      <div class="info-card reveal d1"><div style="font-size:2rem;margin-bottom:0.8rem;">⛰️</div><div class="info-card-value" style="font-size:1rem;margin-bottom:0.4rem;">Géographie & Guérilla</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Le plateau 5×5 sans ligne de front évoque le relief montagneux de la Kabylie, propice aux escarmouches.</p></div>
+      <div class="info-card reveal d2"><div style="font-size:2rem;margin-bottom:0.8rem;">🤝</div><div class="info-card-value" style="font-size:1rem;margin-bottom:0.4rem;">Diplomatie & Alliance</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">Chaque erreur de placement conduit à l'encerclement. Le jeu reflète la complexité des rapports sociaux.</p></div>
+      <div class="info-card reveal d3"><div style="font-size:2rem;margin-bottom:0.8rem;">🧠</div><div class="info-card-value" style="font-size:1rem;margin-bottom:0.4rem;">Pédagogie de la patience</div><p style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">En séparant placement et déplacement, le Tiddas enseigne que toute action précipitée mène à l'échec.</p></div>
+    </div>
+    <div class="reveal d4" style="margin-top:2rem;padding:1.5rem;background:linear-gradient(135deg,rgba(185,28,28,0.06),rgba(26,86,219,0.06));border-radius:16px;text-align:center;">
+      <p style="font-family:var(--font-body);font-size:1.2rem;font-style:italic;color:var(--text-main);line-height:1.8;">« Yewɛer lɛeb n tiddas / Am kessar ak d usawen »</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Le jeu de Tiddas est impitoyable, comme les descentes et les montées. — Slimane Azem</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 8 — APPLICATION ═══════════════════════ -->
+<section class="slide" data-index="7">
+  <div class="slide-inner two-col">
+    <div>
+      <span class="label-tag reveal">Application web</span>
+      <h2 class="display-sub reveal d1" style="font-size:clamp(1.6rem,3.5vw,2.4rem);margin:0.6rem 0 1.2rem;">Préserver par le numérique</h2>
+      <div class="reveal d2" style="width:48px;height:3px;background:linear-gradient(90deg,var(--kab-red),var(--kab-blue));margin-bottom:1.5rem;"></div>
+      <p class="body-text reveal d2"><strong>aylantiddas.github.io/GAME</strong> est né d'un désir simple : <strong>préserver et transmettre</strong> un trésor du patrimoine kabyle. Cette application offre au Tiddas une nouvelle vie, sans en trahir l'esprit.</p>
+      <div class="reveal d3" style="margin-top:1.5rem;">
+        <div style="display:flex;gap:1rem;align-items:flex-start;padding:0.8rem 0;border-bottom:1px solid rgba(28,20,9,0.06);"><div style="width:40px;height:40px;border-radius:10px;background:rgba(30,136,229,0.08);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🌐</div><div><div style="font-weight:700;font-size:0.95rem;">Multijoueur en ligne</div><div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.1rem;">Salons, tournois en temps réel, mode spectateur</div></div></div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;padding:0.8rem 0;border-bottom:1px solid rgba(28,20,9,0.06);"><div style="width:40px;height:40px;border-radius:10px;background:rgba(30,136,229,0.08);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🤖</div><div><div style="font-weight:700;font-size:0.95rem;">IA · 4 niveaux</div><div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.1rem;">De la partie détendue au défi expert (minimax)</div></div></div>
+        <div style="display:flex;gap:1rem;align-items:flex-start;padding:0.8rem 0;border-bottom:1px solid rgba(28,20,9,0.06);"><div style="width:40px;height:40px;border-radius:10px;background:rgba(30,136,229,0.08);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🗣️</div><div><div style="font-weight:700;font-size:0.95rem;">Trilingue — FR · ⵣ · EN</div><div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.1rem;">Interface complète en kabyle (Tifinagh)</div></div></div>
+      </div>
+      <a href="https://aylantiddas.github.io/GAME/" target="_blank" class="cta-btn reveal d4" style="margin-top:1.5rem;">Découvrir l'application →</a>
+    </div>
+    <div class="reveal d3">
+      <div class="photo-slot" style="aspect-ratio:9/16;max-width:280px;margin:0 auto 1rem;">
+        <img src="" alt="Capture écran application">
+        <div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Capture d'écran</span></div>
+      </div>
+      <div class="glass-panel" style="text-align:center;">
+        <div style="font-family:var(--font-tifi);font-size:1.5rem;color:var(--kab-blue);">ⵜⵉⴷⴷⴰⵙ</div>
+        <p style="font-family:var(--font-title);font-size:0.9rem;color:var(--text-main);">Jeu Ancestral Amazigh</p>
+        <span style="display:inline-block;padding:0.3rem 0.8rem;border-radius:20px;background:rgba(30,136,229,0.08);border:1px solid rgba(30,136,229,0.2);font-size:0.7rem;font-weight:600;color:var(--kab-blue);">Patrimoine Amazigh · Idles Amaziɣ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 9 — DÉMO LIVE ═══════════════════════ -->
+<section class="slide" data-index="8">
+  <div class="slide-inner" style="text-align:center;max-width:700px;">
+    <span class="label-tag reveal">Démonstration</span>
+    <h2 class="display-sub reveal d1" style="font-size:clamp(2rem,5vw,3.5rem);margin:0.8rem 0 1.5rem;">Jouez en direct</h2>
+    <p class="body-text reveal d2" style="margin-bottom:2rem;">Scannez le QR code ou rendez-vous sur l'application pour tester le Tiddas en temps réel — seul contre l'IA ou en multijoueur.</p>
+    <div class="reveal d3" style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;align-items:center;">
+      <div style="width:180px;height:180px;background:#fff;border-radius:16px;padding:8px;box-shadow:var(--shadow-2);border:3px solid var(--wood-light);"><img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://aylantiddas.github.io/GAME/&color=1c1409&bgcolor=ffffff" alt="QR Code" style="width:100%;height:100%;object-fit:contain;"></div>
+      <div style="text-align:left;"><p style="font-family:var(--font-title);font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;">aylantiddas.github.io</p><p style="font-size:0.9rem;color:var(--text-muted);line-height:1.6;">Application web progressive (PWA)<br>Compatible mobile & desktop<br>Aucune installation requise</p></div>
+    </div>
+    <div class="photo-slot reveal d4" style="max-width:600px;margin:2rem auto 0;aspect-ratio:21/9;">
+      <img src="" alt="Photo de la salle">
+      <div class="photo-label"><svg viewBox="0 0 24 24" style="width:24px;height:24px;"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg><span>Photo de la conférence</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SLIDE 10 — CONCLUSION ═══════════════════════ -->
+<section class="slide" data-index="9">
+  <div class="slide-inner" style="text-align:center;max-width:800px;">
+    <p class="tifi reveal" style="font-size:clamp(4rem,10vw,8rem);margin-bottom:0.5rem;">ⵣ</p>
+    <h2 class="display-title reveal d1" style="font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1.5rem;">Chaque partie jouée est<br>un acte de <span style="color:var(--kab-blue);">résistance culturelle</span></h2>
+    <p class="body-text reveal d2" style="max-width:600px;margin:0 auto 1.5rem;">La préservation du patrimoine immatériel nécessite des <strong>acteurs engagés</strong>. La technologie est un vecteur puissant lorsqu'elle sert l'authenticité.</p>
+    <div class="reveal d3" style="padding:1.5rem;background:linear-gradient(135deg,rgba(185,28,28,0.06),rgba(26,86,219,0.06));border-radius:16px;display:inline-block;margin-bottom:2rem;">
+      <p style="font-family:var(--font-body);font-size:1.2rem;font-style:italic;color:var(--text-main);line-height:1.8;">« Ddunit am Tiddest, mi k-seqqan xas ddem-itt »</p>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">La vie est comme Tiddest : si tu es pigé, lève-toi.</p>
+    </div>
+    <a href="https://aylantiddas.github.io/GAME/" target="_blank" class="cta-btn reveal d4">Jouer au Tiddas →</a>
+    <div class="reveal d5" style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(28,20,9,0.1);">
+      <p style="font-size:0.8rem;color:var(--text-muted);letter-spacing:0.15em;text-transform:uppercase;">Conférence de Boussad TAMAZIRT · Mois du Patrimoine · Maison de la Culture · 17 Mai 2026</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /slides-container -->
+
+<script>
+/* ═══════════════════════ SLIDE ENGINE ═══════════════════════ */
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+const progressBar = document.getElementById('progress-bar');
+const counter = document.getElementById('slide-counter');
+const dotsContainer = document.getElementById('nav-dots');
+slides.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+  dot.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(dot);
+});
+const dots = document.querySelectorAll('.nav-dot');
+function updateUI() {
+  progressBar.style.width = ((current + 1) / total * 100) + '%';
+  counter.textContent = (current + 1) + ' / ' + total;
+  dots.forEach((d, i) => d.classList.toggle('active', i === current));
+}
+function goTo(index) {
+  if (index < 0 || index >= total || index === current) return;
+  slides[current].classList.remove('active');
+  current = index;
+  slides[current].classList.add('active');
+  updateUI();
+}
+function next() { goTo(current + 1); }
+function prev() { goTo(current - 1); }
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('prevBtn').addEventListener('click', prev);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+updateUI();
+
+/* ═══════════════════════ PLATEAU ANIMÉ ═══════════════════════ */
+(function() {
+  const board = document.getElementById('game-board');
+  const status = document.getElementById('board-status');
+  const pc1 = document.getElementById('phase-card-1');
+  const pc2 = document.getElementById('phase-card-2');
+  if (!board) return;
+  const cells = [];
+  for (let r = 0; r < 5; r++) {
+    cells[r] = [];
+    for (let c = 0; c < 5; c++) {
+      const el = document.createElement('div');
+      el.className = 'gc';
+      board.appendChild(el);
+      cells[r][c] = { el, piece: null };
+    }
+  }
+  function setStatus(txt) { status.textContent = txt; }
+  function setPhase(n) { pc1.classList.toggle('active', n===1); pc2.classList.toggle('active', n===2); }
+  function placePiece(r, c, player) {
+    return new Promise(resolve => {
+      const p = document.createElement('div');
+      p.className = `gp p${player} entering`;
+      cells[r][c].el.appendChild(p);
+      cells[r][c].piece = { el: p, player };
+      setTimeout(() => { p.classList.remove('entering'); resolve(); }, 500);
+    });
+  }
+  function removePiece(r, c) {
+    return new Promise(resolve => {
+      const cell = cells[r][c];
+      if (!cell.piece) { resolve(); return; }
+      cell.piece.el.classList.add('leaving');
+      setTimeout(() => { cell.piece.el.remove(); cell.piece = null; resolve(); }, 350);
+    });
+  }
+  function setMill(coords, on) {
+    coords.forEach(([r,c]) => cells[r][c].el.classList.toggle('mill-cell', on));
+  }
+  const delay = ms => new Promise(r => setTimeout(r, ms));
+
+  const placements = [
+    [1,[0,0]], [2,[4,4]], [1,[0,1]], [2,[4,3]], [1,[2,0]], [2,[2,4]],
+    [1,[3,1]], [2,[1,3]], [1,[4,0]], [2,[0,4]], [1,[1,0]], [2,[3,4]],
+    [1,[0,2]], [2,[4,2]], [1,[4,1]], [2,[0,3]], [1,[2,1]], [2,[2,3]],
+    [1,[1,2]], [2,[3,2]],
+  ];
+  const millCoords = [[0,0],[0,1],[0,2]];
+  const captureTarget = [4,4];
+
+  async function runAnimation() {
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 5; c++) await removePiece(r, c);
+    setPhase(1);
+    setStatus('Phase 1 — Placement stratégique des pions…');
+    await delay(600);
+    for (let i = 0; i < placements.length; i++) {
+      const [pl, [r,c]] = placements[i];
+      setStatus(`Phase 1 — Joueur ${pl===1?'⬛ Foncé':'🟥 Clair'} place un pion`);
+      await placePiece(r, c, pl);
+      await delay(i < 4 ? 600 : 250);
+    }
+    await delay(800);
+    setPhase(2);
+    setStatus('Phase 2 — Déplacement et capture…');
+    await delay(800);
+    setStatus('⬛ Pion foncé se déplace…');
+    await removePiece(0, 2);
+    await delay(400);
+    await placePiece(0, 2, 1);
+    await delay(400);
+    setStatus('⚡ Alignement de 3 — atellet ! Capture autorisée.');
+    setMill(millCoords, true);
+    await delay(1800);
+    setStatus('⬛ Capture du pion adverse…');
+    setMill(millCoords, false);
+    await removePiece(...captureTarget);
+    await delay(600);
+    setStatus('✓ Pion capturé. La partie continue…');
+    await delay(3000);
+    runAnimation();
+  }
+
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) { observer.disconnect(); runAnimation(); }
+  }, { threshold: 0.4 });
+  observer.observe(board);
+})();
+</script>
+</body>
+</html>
